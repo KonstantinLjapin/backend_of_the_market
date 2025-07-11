@@ -4,10 +4,11 @@ services:
     env_file:
       - ./.env
     stop_signal: SIGINT
-    container_name: api_fast_api
+    container_name: ${API_CONTAINER_NAME}
     command: >
       bash -c "
-      sleep 7s; 
+      sleep 7s;
+      python3.12 src/main.py 
       "
     volumes:
       - ./dump/app:/usr/src/app

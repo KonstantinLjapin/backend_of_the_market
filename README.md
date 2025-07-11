@@ -16,11 +16,14 @@
 
 
 ### Запуск проекта
-
+#### быстрый старт докер
+  + #####  sudo cmod +x start_test.sh 
+  + #####  ./start_test.sh
+- * ###### http://127.0.0.1:8080/ping проверка
 ## Холодный старт
 - poetry init -n --python "^3.12"
 - poetry config virtualenvs.in-project true
-- poetry env use python3.12
+- poetry env use python3.12 создаст виртуальное окружение
 - mkdir src
 - poetry install --no-root
 
