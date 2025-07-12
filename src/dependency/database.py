@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.ext.asyncio import create_async_engine
 from typing import AsyncGenerator
-from src.models import Base
+from src.dependency.models import Base
 from fastapi import Request
 
 

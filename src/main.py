@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Request, Response, Depends
-from dependency.database import DatabaseHelper, get_db, base_create
+from dependency.database import DatabaseHelper, get_db
 
 description = """ MAXAZINE """
 
@@ -46,5 +46,4 @@ async def check(db=Depends(get_db)):
 
 
 if __name__ == "__main__":
-
     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
