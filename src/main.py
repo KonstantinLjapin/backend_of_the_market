@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, Request, Response
-from dependency.database import DatabaseHelper
+from fastapi import FastAPI, Request, Response, Depends
+from dependency.database import DatabaseHelper, get_db, base_create
 
 description = """ MAXAZINE """
 
@@ -29,11 +29,22 @@ app.add_middleware(
 )
 
 
+@app.middleware("http")
+async def db_session_middleware(request: Request, call_next):
+    response = Response("Internal server error", status_code=500)
+    try:
+        request.state.db = DatabaseHelper()
+        response = await call_next(request)
+    finally:
+        await request.state.db.engine.dispose()
+    return response
+
+
 @app.get("/ping")
-async def pong():
+async def check(db=Depends(get_db)):
     return {"ping": "pong!"}
 
 
 if __name__ == "__main__":
-    # запуск сервера
+
     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
