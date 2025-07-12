@@ -7,10 +7,12 @@ services:
     container_name: ${API_CONTAINER_NAME}
     command: >
       bash -c "
-      sleep 7s;
-      python3.12 -c 'import asyncio; from src.dependency.database import base_create; asyncio.run(base_create())';
-      sleep 2s;
-      python3.12 src/main.py 
+        echo 'Waiting for database...';
+        sleep 10;
+        echo 'Applying database migrations...';
+        alembic upgrade head;
+        echo 'Starting application...';
+        python3.12 src/main.py
       "
     volumes:
       - ./dump/app:/usr/src/app

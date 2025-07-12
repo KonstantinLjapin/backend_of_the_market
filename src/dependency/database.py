@@ -1,15 +1,13 @@
 from src.config import db_settings
-from sqlalchemy.ext.asyncio import async_sessionmaker
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.ext.asyncio import AsyncEngine
-from sqlalchemy.ext.asyncio import create_async_engine
 from typing import AsyncGenerator
-from src.dependency.models import Base
 from fastapi import Request
+from fastapi import Depends
+from fastapi_users.db import SQLAlchemyBaseUserTableUUID, SQLAlchemyUserDatabase
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
+from sqlalchemy.orm import sessionmaker
 
-
-def get_db(request: Request):
-    return request.state.db
+Base: DeclarativeMeta = declarative_base()
 
 
 def make_connection_string() -> str:
@@ -21,43 +19,25 @@ def make_connection_string() -> str:
             f"{db_settings.postgres_host}:{db_settings.postgres_port}/{db_settings.postgres_db}")
 
 
-class DatabaseHelper:
-    def __init__(
-            self,
-            url: str = make_connection_string(),
-            echo: bool = False,
-            echo_pool: bool = False,
-            pool_size: int = 5,
-            max_overflow: int = 10,
-    ) -> None:
-        self.engine: AsyncEngine = create_async_engine(
-            url=url,
-            echo=echo,
-            echo_pool=echo_pool,
-            pool_size=pool_size,
-            max_overflow=max_overflow,
-        )
-        self.session_factory: async_sessionmaker[AsyncSession] = async_sessionmaker(
-            bind=self.engine,
-            autoflush=False,
-            autocommit=False,
-            expire_on_commit=False,
-        )
-
-    async def dispose(self) -> None:
-        await self.engine.dispose()
-
-    async def session_getter(self) -> AsyncGenerator[AsyncSession, None]:
-        async with self.session_factory() as session:
-            yield session
+class User(SQLAlchemyBaseUserTableUUID, Base):
+    pass
 
 
-async def base_create() -> None:
-    db = DatabaseHelper()
-    engine = db.engine
+engine = create_async_engine(make_connection_string())
+async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+
+async def create_db_and_tables():
     async with engine.begin() as conn:
-        print("Checking for missing tables...")
         await conn.run_sync(Base.metadata.create_all)
 
-    await engine.dispose()
-    print("Database schema checked successfully!")
+
+async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
+    async with async_session_maker() as session:
+        yield session
+
+
+async def get_user_db(session: AsyncSession = Depends(get_async_session)):
+    yield SQLAlchemyUserDatabase(session, User)
+
+

@@ -1,78 +1,61 @@
+import asyncio
+import sys
+from pathlib import Path
 from logging.config import fileConfig
-
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
+from sqlalchemy.ext.asyncio import create_async_engine
 from alembic import context
 
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
+# Добавляем корень проекта в PYTHONPATH
+project_root = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(project_root))
+
+# Импортируем наши модули после добавления пути
+from src.dependency.database import Base, make_connection_string
+
+# Стандартная конфигурация Alembic
 config = context.config
 
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
-if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+# Настраиваем логирование
+fileConfig(config.config_file_name)
 
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-target_metadata = None
+# Получаем асинхронный URL БД
+database_url = make_connection_string()
 
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
+# Устанавливаем метаданные для миграций
+target_metadata = Base.metadata
 
 
-def run_migrations_offline() -> None:
-    """Run migrations in 'offline' mode.
+async def run_async_migrations():
+    """Выполнение миграций в асинхронном режиме"""
+    # Создаем асинхронный движок
+    engine = create_async_engine(database_url)
 
-    This configures the context with just a URL
-    and not an Engine, though an Engine is acceptable
-    here as well.  By skipping the Engine creation
-    we don't even need a DBAPI to be available.
+    async with engine.connect() as connection:
+        # Выполняем синхронные операции миграции через run_sync
+        await connection.run_sync(do_run_migrations)
 
-    Calls to context.execute() here emit the given string to the
-    script output.
+    # Корректно закрываем движок
+    await engine.dispose()
 
-    """
-    url = config.get_main_option("sqlalchemy.url")
+
+def do_run_migrations(connection):
+    """Синхронная функция для выполнения миграций"""
     context.configure(
-        url=url,
+        connection=connection,
         target_metadata=target_metadata,
-        literal_binds=True,
-        dialect_opts={"paramstyle": "named"},
+        compare_type=True,
+        compare_server_default=True,
+        render_as_batch=True  # Важно для асинхронной работы
     )
 
     with context.begin_transaction():
         context.run_migrations()
 
 
-def run_migrations_online() -> None:
-    """Run migrations in 'online' mode.
-
-    In this scenario we need to create an Engine
-    and associate a connection with the context.
-
-    """
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
-
-    with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
-
-        with context.begin_transaction():
-            context.run_migrations()
+def run_migrations_online():
+    """Запуск асинхронных миграций"""
+    # Запускаем асинхронную функцию в event loop
+    asyncio.run(run_async_migrations())
 
 
-if context.is_offline_mode():
-    run_migrations_offline()
-else:
-    run_migrations_online()
+run_migrations_online()
