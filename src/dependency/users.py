@@ -11,7 +11,8 @@ from fastapi_users.authentication import (
 from fastapi_users.db import SQLAlchemyUserDatabase
 
 from src.config import settings_authorization
-from src.dependency.database import User, get_user_db
+from src.dependency.database import get_user_db
+from src.dependency.models import User
 
 SECRET = settings_authorization.secret_key
 

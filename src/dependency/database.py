@@ -7,6 +7,7 @@ from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 from sqlalchemy.orm import sessionmaker
 
 from src.config import db_settings
+from src.dependency.models import User
 
 Base: DeclarativeMeta = declarative_base()
 
@@ -18,10 +19,6 @@ def make_connection_string() -> str:
     asyncpg_engine: str = "asyncpg"
     return (f"postgresql+{asyncpg_engine}://{db_settings.postgres_user}:{db_settings.postgres_password}@"
             f"{db_settings.postgres_host}:{db_settings.postgres_port}/{db_settings.postgres_db}")
-
-
-class User(SQLAlchemyBaseUserTableUUID, Base):
-    pass
 
 
 engine = create_async_engine(make_connection_string())
@@ -40,5 +37,3 @@ async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
     yield SQLAlchemyUserDatabase(session, User)
-
-
