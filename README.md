@@ -47,7 +47,5 @@
           - poetry update
           #### Запустить приложение
           - poetry run python src/main.py 
-          #### Форматировать код
-          - poetry run format
           #### Проверить и исправить код
-          - poetry run lint
+          -  poetry run ruff check . --fix

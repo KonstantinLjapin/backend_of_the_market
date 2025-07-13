@@ -1,7 +1,8 @@
 from __future__ import annotations
+
+from sqlalchemy import Boolean, Column, Integer, String
 from sqlalchemy.ext.asyncio import AsyncAttrs
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, validates
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Float, Date, DateTime, Enum, BigInteger
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class Base(AsyncAttrs, DeclarativeBase):

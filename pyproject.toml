@@ -20,7 +20,19 @@ alembic = "^1.16.4"
 asyncpg = "^0.30.0"
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.12.2"
+ruff = "^0.12.3"
+
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]  # Используем новый раздел lint
+select = ["E", "F", "W", "I", "UP"]
+
+[tool.ruff.format]
+indent-style = "space"
+quote-style = "double"
+skip-magic-trailing-comma = true
 
 [tool.poetry.scripts]
 lint = "ruff check . --fix"

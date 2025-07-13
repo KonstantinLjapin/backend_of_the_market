@@ -1,8 +1,9 @@
 import uvicorn
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, Request, Response, Depends
-from src.handlers.base import base_router
+
 from src.handlers.auth import auth_router
+from src.handlers.base import base_router
 
 description = """ MAXAZINE """
 

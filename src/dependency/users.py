@@ -9,6 +9,7 @@ from fastapi_users.authentication import (
     JWTStrategy,
 )
 from fastapi_users.db import SQLAlchemyUserDatabase
+
 from src.config import settings_authorization
 from src.dependency.database import User, get_user_db
 
