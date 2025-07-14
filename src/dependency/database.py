@@ -7,9 +7,7 @@ from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 from sqlalchemy.orm import sessionmaker
 
 from src.config import db_settings
-from src.dependency.models import User
-
-Base: DeclarativeMeta = declarative_base()
+from src.dependency.models import User, Base
 
 
 def make_connection_string() -> str:

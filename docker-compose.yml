@@ -9,8 +9,6 @@ services:
       bash -c "
         echo 'Waiting for database...';
         sleep 10;
-        echo 'Applying database migrations...';
-        alembic upgrade head;
         echo 'Starting application...';
         python3.12 src/main.py
       "
