@@ -2,11 +2,11 @@ import asyncio
 import sys
 from logging.config import fileConfig
 from pathlib import Path
-
 from sqlalchemy.ext.asyncio import create_async_engine
-
 from alembic import context
-from src.dependency.database import Base, make_connection_string
+from src.dependency.models import Base
+from src.dependency.database import make_connection_string
+
 
 # Добавляем корень проекта в PYTHONPATH
 project_root = Path(__file__).resolve().parent.parent

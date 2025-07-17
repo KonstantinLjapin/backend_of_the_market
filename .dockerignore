@@ -5,7 +5,7 @@ venv/
 
 #all
 dump/
-start_test.sh
+lyapin_start_test.sh
 .idea
 .git
 .gitignore
