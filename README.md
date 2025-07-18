@@ -18,7 +18,7 @@
 ### Запуск проекта
 - git clone {project url}
 #### быстрый старт докер
-  + #####  sudo cmod +x start_test.sh 
+  + #####  sudo chmod +x start_test_Mtv288.sh 
   + #####  ./start_test.sh запустит скрит докер компосе по завершению очистит
 - * ###### http://127.0.0.1:8080/ping проверка
 #### для разработчиков
