@@ -1,9 +1,10 @@
+from contextlib import asynccontextmanager
+from src.middleware.cors import add_cors
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-from src.handlers.auth import auth_router
-from src.handlers.base import base_router
+from src.avtoloader.routers import load_routers_from_package
+from src.dependency.database import create_db_and_tables
 
 description = """ MAXAZINE """
 
@@ -21,17 +22,15 @@ origins = [
     "*",
 ]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["Content-Disposition"]
-)
 
-app.include_router(base_router)
-app.include_router(auth_router)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await create_db_and_tables()
+    yield
+
+app.include_router(load_routers_from_package("src.routers"))
+add_cors(app)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")

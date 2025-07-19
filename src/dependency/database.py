@@ -5,7 +5,7 @@ from fastapi_users.db import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from src.config.config import db_settings
+from src.config import db_settings
 from src.dependency.models import User, Base
 
 
