@@ -13,3 +13,4 @@ def add_cors(app: FastAPI) -> None:
         allow_headers=settings.allow_headers,
         expose_headers=settings.expose_headers,
     )
+
