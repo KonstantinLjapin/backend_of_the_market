@@ -2,7 +2,6 @@ from contextlib import asynccontextmanager
 from src.middleware.cors import add_cors
 import uvicorn
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from src.avtoloader.routers import load_routers_from_package
 from src.dependency.database import create_db_and_tables
 
@@ -18,10 +17,6 @@ app = FastAPI(
         "telegram": "XXXXXX"
     }
 )
-origins = [
-    "*",
-]
-
 
 
 @asynccontextmanager
