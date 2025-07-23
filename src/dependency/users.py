@@ -1,4 +1,6 @@
+import uuid
 from fastapi import Depends
+from fastapi_users import FastAPIUsers
 from fastapi_users.authentication import (
     AuthenticationBackend,
     BearerTransport,
@@ -7,9 +9,9 @@ from fastapi_users.authentication import (
 from fastapi_users.db import SQLAlchemyUserDatabase
 
 from src.services.auth.user_manager import UserManager
-from src.config.config import settings_authorization
+from src.config.auth import settings_authorization
 from src.dependency.database import get_user_db
-from src.dependency.models import User
+from src.models.users import User
 
 SECRET = settings_authorization.secret_key
 
