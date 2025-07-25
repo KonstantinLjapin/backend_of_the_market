@@ -1,19 +1,15 @@
 import asyncio
-import sys
 from logging.config import fileConfig
 from pathlib import Path
-from sqlalchemy.ext.asyncio import create_async_engine
-from alembic import context
 from src.dependency.models import Base
 from src.dependency.database import make_connection_string
-
-# Явный импорт для решения проблемы GUID
+import os
+import sys
+from sqlalchemy.ext.asyncio import create_async_engine
+from alembic import context
 import fastapi_users_db_sqlalchemy.generics
+from fastapi_users_db_sqlalchemy.generics import GUID
 
-# Добавляем корень проекта в PYTHONPATH
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-
-# Стандартная конфигурация Alembic
 config = context.config
 
 # Настраиваем логирование
@@ -38,6 +34,7 @@ async def run_async_migrations():
     # Корректно закрываем движок
     await engine.dispose()
 
+
 def do_run_migrations(connection):
     """Синхронная функция для выполнения миграций"""
     context.configure(
@@ -49,10 +46,14 @@ def do_run_migrations(connection):
         # Критически важные настройки для работы с fastapi-users
         include_schemas=True,
         include_object=lambda object, name, type_, reflected, compare_to: True,
-        user_module_prefix="sa.",
+        include_symbol=lambda name, _: "GUID" not in name,
+        user_module_prefix="",
+        user_module_prefixes=['fastapi_users_db_sqlalchemy.generics.'],
         user_module_imports={
             'fastapi_users_db_sqlalchemy.generics': ['GUID']
         }
+
+
     )
 
     with context.begin_transaction():

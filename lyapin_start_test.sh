@@ -39,7 +39,7 @@ sudo docker compose up;
 sudo docker stop $(sudo docker ps -a -q) 2>/dev/null || true;
 sudo docker rm $(sudo docker ps -a -q) 2>/dev/null || true;
 sudo docker rmi $(sudo docker images --format="{{.Repository}} {{.ID}}" | \
-                  grep "^backmarket" | cut -d' ' -f2) 2>/dev/null || true;
+                  grep "^backend_of_the_market-api_fast_api" | cut -d' ' -f2) 2>/dev/null || true;
 sudo docker network rm "market_backend" 2>/dev/null || true;
 
 # Удаление в зависимости от режима

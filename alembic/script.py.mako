@@ -7,7 +7,9 @@ Create Date: ${create_date}
 """
 from alembic import op
 import sqlalchemy as sa
-import fastapi_users_db_sqlalchemy.generics  # Обязательный импорт
+import fastapi_users_db_sqlalchemy.generics
+import fastapi_users_db_sqlalchemy
+from fastapi_users_db_sqlalchemy.generics import GUID
 ${imports if imports else ""}
 
 # revision identifiers, used by Alembic.
