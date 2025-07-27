@@ -3,6 +3,8 @@ import uuid
 from fastapi_users import schemas
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTableUUID
 
+from src.config.data_base import Base
+
 
 class UserRead(schemas.BaseUser[uuid.UUID]):
     pass
