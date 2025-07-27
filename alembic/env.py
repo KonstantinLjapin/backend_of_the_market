@@ -1,32 +1,26 @@
 import asyncio
-import sys
 from logging.config import fileConfig
 from pathlib import Path
-
+from src.dependency.models import Base
+from src.dependency.database import make_connection_string
+import os
+import sys
 from sqlalchemy.ext.asyncio import create_async_engine
-
 from alembic import context
-from src.dependency.database import Base, make_connection_string
+import fastapi_users_db_sqlalchemy.generics
+from fastapi_users_db_sqlalchemy.generics import GUID
 
-# Добавляем корень проекта в PYTHONPATH
-project_root = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(project_root))
-
-# Импортируем наши модули после добавления пути
-
-
-# Стандартная конфигурация Alembic
 config = context.config
 
 # Настраиваем логирование
-fileConfig(config.config_file_name)
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
 
 # Получаем асинхронный URL БД
 database_url = make_connection_string()
 
 # Устанавливаем метаданные для миграций
 target_metadata = Base.metadata
-
 
 async def run_async_migrations():
     """Выполнение миграций в асинхронном режиме"""
@@ -48,17 +42,26 @@ def do_run_migrations(connection):
         target_metadata=target_metadata,
         compare_type=True,
         compare_server_default=True,
-        render_as_batch=True  # Важно для асинхронной работы
+        render_as_batch=True,
+        # Критически важные настройки для работы с fastapi-users
+        include_schemas=True,
+        include_object=lambda object, name, type_, reflected, compare_to: True,
+        include_symbol=lambda name, _: "GUID" not in name,
+        user_module_prefix="",
+        user_module_prefixes=['fastapi_users_db_sqlalchemy.generics.'],
+        user_module_imports={
+            'fastapi_users_db_sqlalchemy.generics': ['GUID']
+        }
+
+
     )
 
     with context.begin_transaction():
         context.run_migrations()
 
-
 def run_migrations_online():
     """Запуск асинхронных миграций"""
     # Запускаем асинхронную функцию в event loop
     asyncio.run(run_async_migrations())
-
 
 run_migrations_online()
