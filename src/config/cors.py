@@ -11,3 +11,4 @@ class CorsSettings(BaseSettings):
     class Config:
         env_file = "../.env"
         env_prefix = "CORS_"
+        extra = "allow"

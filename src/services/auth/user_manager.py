@@ -2,8 +2,8 @@ import uuid
 from typing import Optional
 from fastapi_users import Request
 from fastapi_users import BaseUserManager, UUIDIDMixin
-from src.config.config import settings_authorization
-from src.dependency.models import User
+from src.config.auth import settings_authorization
+from src.models.users import User
 
 SECRET = settings_authorization.secret_key
 

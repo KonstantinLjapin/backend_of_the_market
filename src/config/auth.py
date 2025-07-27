@@ -8,6 +8,7 @@ class SettingsAuthorization(BaseSettings):
 
     class Config:
         env_file = "../.env"
+        env_prefix= "AUTH_"
         extra = "allow"
 
 settings_authorization = SettingsAuthorization()

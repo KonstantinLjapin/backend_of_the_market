@@ -10,6 +10,7 @@ class SettingsDataBase(BaseSettings):
 
     class Config:
         env_file = "../.env"
+        env_prefix= "DB_"
         extra = "allow"
 
 db_settings = SettingsDataBase()

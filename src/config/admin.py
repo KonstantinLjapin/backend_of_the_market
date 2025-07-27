@@ -6,6 +6,7 @@ class SettingsBaseAdmin(BaseSettings):
 
     class Config:
         env_file = "../.env"
+        env_prefix="ADMIN_"
         extra = "allow"
 
 admin_settings = SettingsBaseAdmin()
